@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+:root {
+	--surface-0: #f7fbff;
+	--surface-1: #eaf3ff;
+	--surface-2: #dcecff;
+	--brand-500: #2f7cff;
+	--brand-600: #1d5fdb;
+	--ink-900: #10203f;
+	--ink-700: #31456d;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	font-family: "Space Grotesk", "Segoe UI", sans-serif;
+	background:
+		radial-gradient(900px 500px at 8% -10%, #b7d6ff 0%, transparent 60%),
+		radial-gradient(700px 420px at 100% 0%, #d6e9ff 0%, transparent 55%),
+		linear-gradient(150deg, var(--surface-1) 0%, var(--surface-0) 46%, #ffffff 100%);
+	color: var(--ink-900);
+	min-height: 100vh;
+}
+
+#root {
+	min-height: 100vh;
+}
+
+.glass-surface {
+	background: linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.72));
+	backdrop-filter: blur(10px);
+	border: 1px solid rgba(191, 219, 254, 0.85);
+	box-shadow: 0 24px 60px rgba(37, 99, 235, 0.08);
+}
+
+.brand-button {
+	background: linear-gradient(120deg, var(--brand-600), var(--brand-500));
+	color: #ffffff;
+	transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+}
+
+.brand-button:hover {
+	transform: translateY(-1px);
+	filter: brightness(1.02);
+	box-shadow: 0 14px 30px rgba(29, 95, 219, 0.35);
+}
+
+.outline-button {
+	background: rgba(255, 255, 255, 0.8);
+	border: 1px solid #bfdbfe;
+	color: var(--ink-900);
+	transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.outline-button:hover {
+	background: rgba(255, 255, 255, 0.98);
+	border-color: #93c5fd;
+}
