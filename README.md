@@ -134,7 +134,7 @@ Refer to the route files in `backend/routes/` for exact request/response shapes.
 
 ---
 
-## What I implemented (developer notes)
+## What We implemented (developer notes)
 
 This project includes the following implemented pieces (good quick checklist for reviewers):
 
