@@ -1,7 +1,23 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+
+const createToken = (user) => {
+    return jwt.sign(
+        {
+            user: {
+                id: user._id,
+                email: user.email,
+                role: user.role,
+                fullName: user.fullName,
+            },
+        },
+        process.env.JWT_SECRET || 'secret',
+        { expiresIn: '7d' }
+    );
+};
 
 // @route   POST /api/auth/signup
 // @desc    Register a new user
@@ -36,7 +52,8 @@ router.post('/signup', async (req, res) => {
                 fullName: user.fullName,
                 email: user.email,
                 role: user.role
-            }
+            },
+            token: createToken(user)
         });
     } catch (err) {
         console.error(err.message);
@@ -68,7 +85,8 @@ router.post('/login', async (req, res) => {
                 fullName: user.fullName,
                 email: user.email,
                 role: user.role
-            }
+            },
+            token: createToken(user)
         });
     } catch (err) {
         console.error(err.message);

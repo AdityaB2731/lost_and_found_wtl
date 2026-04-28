@@ -14,6 +14,7 @@ const AuthCard = ({ mode }) => {
   const location = useLocation();
   const [formData, setFormData] = useState({ fullName: '', email: '', password: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const destination = location.state?.from || '/';
 
@@ -30,12 +31,40 @@ const AuthCard = ({ mode }) => {
   }, [location.state, mode]);
 
   const handleChange = (event) => {
+    if (errorMessage) {
+      setErrorMessage('');
+    }
+
     setFormData((current) => ({ ...current, [event.target.name]: event.target.value }));
+  };
+
+  const validateForm = () => {
+    if (mode === 'signup' && formData.fullName.trim().length < 3) {
+      return 'Full name must be at least 3 characters long.';
+    }
+
+    if (!formData.email.trim()) {
+      return 'Email is required.';
+    }
+
+    if (formData.password.length < 4) {
+      return 'Password must be at least 4 characters long.';
+    }
+
+    return '';
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    const validationError = validateForm();
+    if (validationError) {
+      setErrorMessage(validationError);
+      return;
+    }
+
     setIsSubmitting(true);
+    setErrorMessage('');
 
     try {
       const credentials = {
@@ -102,6 +131,7 @@ const AuthCard = ({ mode }) => {
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
+                minLength={3}
                 className="w-full rounded-xl border border-blue-200 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                 placeholder="Jane Doe"
               />
@@ -133,12 +163,19 @@ const AuthCard = ({ mode }) => {
               name="password"
               type="password"
               required
+              minLength={4}
               value={formData.password}
               onChange={handleChange}
               className="w-full rounded-xl border border-blue-200 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              placeholder="Any password works"
+              placeholder="At least 4 characters"
             />
           </div>
+
+          {errorMessage && (
+            <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600" role="alert">
+              {errorMessage}
+            </p>
+          )}
 
           <button
             type="submit"

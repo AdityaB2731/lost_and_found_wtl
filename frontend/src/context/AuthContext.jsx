@@ -5,18 +5,24 @@ const STORAGE_KEY = 'wtlmini-dummy-auth';
 
 const AuthContext = createContext(null);
 
-const readStoredUser = () => {
+const readStoredAuth = () => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : null;
+    const parsed = stored ? JSON.parse(stored) : null;
+
+    if (!parsed || !parsed.user || !parsed.token) {
+      return null;
+    }
+
+    return parsed;
   } catch {
     return null;
   }
 };
 
-const writeStoredUser = (user) => {
-  if (user) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+const writeStoredAuth = (auth) => {
+  if (auth) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(auth));
     return;
   }
 
@@ -44,17 +50,25 @@ const createUser = ({ fullName, email }) => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => readStoredUser());
+  const [auth, setAuth] = useState(() => readStoredAuth());
+  const user = auth?.user ?? null;
+  const token = auth?.token ?? '';
 
   useEffect(() => {
-    writeStoredUser(user);
-  }, [user]);
+    writeStoredAuth(auth);
+  }, [auth]);
 
   const signIn = useCallback(async (credentials) => {
     try {
       const response = await apiLogin(credentials);
       const nextUser = formatUser(response.data.user);
-      setUser(nextUser);
+      const nextToken = response.data.token;
+
+      if (!nextToken) {
+        throw new Error('Login response did not include a token');
+      }
+
+      setAuth({ user: nextUser, token: nextToken });
       return nextUser;
     } catch (error) {
       console.error('Sign in failed:', error);
@@ -74,16 +88,10 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const signOut = useCallback(() => {
-    setUser(null);
+    setAuth(null);
   }, []);
 
-  const getToken = useCallback(async () => {
-    if (!user) {
-      return '';
-    }
-
-    return `dummy-token:${user.id}`;
-  }, [user]);
+  const getToken = useCallback(() => token, [token]);
 
   const value = useMemo(
     () => ({

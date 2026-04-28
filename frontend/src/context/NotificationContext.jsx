@@ -29,7 +29,7 @@ export const NotificationProvider = ({ children }) => {
         console.error("Failed to fetch notifications:", error);
       }
     }
-  }, [isSignedIn, user?.email]);
+  }, [getToken, isSignedIn, user?.email]);
 
   useEffect(() => {
     fetchNotifications();
